@@ -1,5 +1,6 @@
 package guru.springfamework.domain;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -19,4 +20,12 @@ public class Category {
     private Long id;
     private String name;
 
+    public Category() {
+    }
+
+    @Builder
+    public Category(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
