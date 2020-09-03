@@ -6,7 +6,6 @@ import guru.springfamework.domain.Customer;
 import guru.springfamework.repositories.CustomerRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -19,36 +18,31 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class CustomerServiceImplTest {
 
     public static final Long ID = 2L;
     public static final String NAME = "Jimmy";
-
-    @InjectMocks
-    CustomerServiceImpl customerService;
-
-    @Mock
-    CustomerMapper customerMapper;
+    CustomerService customerService;
 
     @Mock
     CustomerRepository customerRepository;
 
+    CustomerMapper customerMapper = CustomerMapper.INSTANCE;
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        customerService = new CustomerServiceImpl(customerMapper, customerRepository);
     }
-
-
 
     @Test
     public void getAllCustomers() throws Exception {
         // given
         List<Customer> customers = Arrays.asList(new Customer(), new Customer(), new Customer());
-        CustomerDTO customerDTO = new CustomerDTO();
         given(customerRepository.findAll()).willReturn(customers);
-        given(customerMapper.customerToCustomerDTO(any())).willReturn(customerDTO);
 
         // when
         List<CustomerDTO> result = customerService.getAllCustomers();
@@ -61,10 +55,7 @@ public class CustomerServiceImplTest {
     public void getCustomerById() throws Exception {
         // given
         Customer customer = Customer.builder().id(ID).firstname(NAME).build();
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setFirstname(NAME);
         given(customerRepository.findById(anyLong())).willReturn(Optional.of(customer));
-        given(customerMapper.customerToCustomerDTO(any())).willReturn(customerDTO);
 
         // when
         CustomerDTO result = customerService.getCustomerById(ID);
@@ -82,17 +73,9 @@ public class CustomerServiceImplTest {
         customerDTO.setFirstname(NAME);
         customerDTO.setLastname(NAME);
 
-        CustomerDTO customerDTO2 = new CustomerDTO();
-        customerDTO2.setFirstname(NAME);
-        customerDTO2.setLastname(NAME);
-        customerDTO2.setCustomerUrl("/api/v1/customer/2");
-
-        Customer customer = Customer.builder().firstname(NAME).lastname(NAME).build();
         Customer savedCustomer = Customer.builder().id(ID).firstname(NAME).lastname(NAME).build();
 
-        when(customerMapper.customerDtoToCustomer(any(CustomerDTO.class))).thenReturn(customer);
-        when(customerRepository.save(any(Customer.class))).thenReturn(savedCustomer);
-        given(customerMapper.customerToCustomerDTO(any(Customer.class))).willReturn(customerDTO2);
+        given(customerRepository.save(any(Customer.class))).willReturn(savedCustomer);
 
         //when
         CustomerDTO savedDto = customerService.createNewCustomer(customerDTO);
@@ -101,4 +84,34 @@ public class CustomerServiceImplTest {
         assertEquals(customerDTO.getFirstname(), savedDto.getFirstname());
         assertEquals("/api/v1/customer/2", savedDto.getCustomerUrl());
     }
+
+    @Test
+    public void saveCustomerByDTO() throws Exception {
+
+        //given
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setFirstname("Jim");
+        customerDTO.setLastname(NAME);
+        Customer savedCustomer = Customer.builder().id(ID).firstname("Jim").lastname(NAME).build();
+
+        given(customerRepository.save(any(Customer.class))).willReturn(savedCustomer);
+
+        //when
+        CustomerDTO savedDto = customerService.saveCustomerByDTO(2L, customerDTO);
+
+        //then
+        assertEquals(customerDTO.getFirstname(), savedDto.getFirstname());
+        assertEquals("/api/v1/customer/2", savedDto.getCustomerUrl());
+    }
+
+    @Test
+    public void deleteCustomerById() throws Exception {
+
+        Long id = 1L;
+
+        customerService.deleteCustomerById(id);
+
+        verify(customerRepository, times(1)).deleteById(anyLong());
+    }
+
 }
