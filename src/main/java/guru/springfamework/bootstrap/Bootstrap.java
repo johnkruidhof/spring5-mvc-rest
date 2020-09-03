@@ -30,12 +30,12 @@ public class Bootstrap implements CommandLineRunner{
 
     private void loadCustomers() {
         Customer joe = new Customer();
-        joe.setFirstName("Joe");
-        joe.setLastName("Newman");
+        joe.setFirstname("Joe");
+        joe.setLastname("Newman");
 
         Customer michael = new Customer();
-        michael.setFirstName("Michael");
-        michael.setLastName("Lachappele");
+        michael.setFirstname("Michael");
+        michael.setLastname("Lachappele");
 
         customerRepository.save(joe);
         customerRepository.save(michael);

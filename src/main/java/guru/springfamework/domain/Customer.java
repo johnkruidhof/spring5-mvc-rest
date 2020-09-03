@@ -16,16 +16,16 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
 
     public Customer() {
     }
 
     @Builder
-    public Customer(Long id, String firstName, String lastName) {
+    public Customer(Long id, String firstname, String lastname) {
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstname = firstname;
+        this.lastname = lastname;
     }
 }

@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
-public class CategoryServiceTest {
+public class CategoryServiceImplTest {
 
     public static final Long ID = 2L;
     public static final String NAME = "Jimmy";
