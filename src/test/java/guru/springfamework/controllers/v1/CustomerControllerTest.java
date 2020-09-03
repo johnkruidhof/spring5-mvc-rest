@@ -19,13 +19,13 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CustomerControllerTest {
+public class CustomerControllerTest extends AbstractRestControllerTest {
 
-    public static final String NAME = "Jim";
-    public static final long ID = 1l;
+    public static final String NAME = "John";
 
     @Mock
     CustomerService customerService;
@@ -46,12 +46,10 @@ public class CustomerControllerTest {
     @Test
     public void testListCategories() throws Exception {
         CustomerDTO customer1 = new CustomerDTO();
-        customer1.setId(ID);
-        customer1.setFirstName(NAME);
+        customer1.setFirstname(NAME);
 
         CustomerDTO customer2 = new CustomerDTO();
-        customer1.setId(2l);
-        customer1.setFirstName("Bob");
+        customer1.setFirstname("Bob");
 
         List<CustomerDTO> customers = Arrays.asList(customer1, customer2);
 
@@ -66,14 +64,37 @@ public class CustomerControllerTest {
     @Test
     public void testGetByIdCustomers() throws Exception {
         CustomerDTO customer1 = new CustomerDTO();
-        customer1.setId(ID);
-        customer1.setFirstName(NAME);
+        customer1.setFirstname(NAME);
 
         when(customerService.getCustomerById(anyLong())).thenReturn(customer1);
 
         mockMvc.perform(get("/api/v1/customers/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", equalTo(1)));
+                .andExpect(jsonPath("$.firstname", equalTo(NAME)));
     }
+
+    @Test
+    public void createNewCustomer() throws Exception {
+        //given
+        CustomerDTO customer = new CustomerDTO();
+        customer.setFirstname("Fred");
+        customer.setLastname("Flintstone");
+
+        CustomerDTO returnDTO = new CustomerDTO();
+        returnDTO.setFirstname(customer.getFirstname());
+        returnDTO.setLastname(customer.getLastname());
+        returnDTO.setCustomerUrl("/api/v1/customers/1");
+
+        when(customerService.createNewCustomer(customer)).thenReturn(returnDTO);
+
+        //when/then
+        mockMvc.perform(post("/api/v1/customers/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(customer)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.firstname", equalTo("Fred")))
+                .andExpect(jsonPath("$.customer_url", equalTo("/api/v1/customers/1")));
+    }
+
 }

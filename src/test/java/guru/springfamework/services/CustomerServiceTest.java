@@ -61,8 +61,7 @@ public class CustomerServiceTest {
         // given
         Customer customer = Customer.builder().id(ID).firstName(NAME).build();
         CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setId(ID);
-        customerDTO.setFirstName(NAME);
+        customerDTO.setFirstname(NAME);
         given(customerRepository.findById(anyLong())).willReturn(Optional.of(customer));
         given(customerMapper.customerToCustomerDTO(any())).willReturn(customerDTO);
 
@@ -71,7 +70,6 @@ public class CustomerServiceTest {
 
         // then
         assertNotNull(result);
-        assertEquals(ID, result.getId());
-        assertEquals(NAME, result.getFirstName());
+        assertEquals(NAME, result.getFirstname());
     }
 }
