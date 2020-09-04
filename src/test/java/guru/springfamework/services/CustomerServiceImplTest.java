@@ -25,6 +25,7 @@ public class CustomerServiceImplTest {
 
     public static final Long ID = 2L;
     public static final String NAME = "Jimmy";
+    public static final String BASEURL_ID2 = CustomerServiceImpl.BASE_URL+"2";
     CustomerService customerService;
 
     @Mock
@@ -82,7 +83,7 @@ public class CustomerServiceImplTest {
 
         //then
         assertEquals(customerDTO.getFirstname(), savedDto.getFirstname());
-        assertEquals("/api/v1/customer/2", savedDto.getCustomerUrl());
+        assertEquals(BASEURL_ID2, savedDto.getCustomerUrl());
     }
 
     @Test
@@ -101,7 +102,7 @@ public class CustomerServiceImplTest {
 
         //then
         assertEquals(customerDTO.getFirstname(), savedDto.getFirstname());
-        assertEquals("/api/v1/customer/2", savedDto.getCustomerUrl());
+        assertEquals(BASEURL_ID2, savedDto.getCustomerUrl());
     }
 
     @Test

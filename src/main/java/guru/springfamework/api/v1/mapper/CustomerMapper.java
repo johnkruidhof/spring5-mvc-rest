@@ -9,12 +9,13 @@ import org.mapstruct.factory.Mappers;
 //@Mapper
 //@Mapper(uses = {CustomerUrlMapper.class})
 //@DecoratedWith(CustomerMapperDecorator.class)
-@Mapper(imports = CustomerURLFormat.class)
+@Mapper(imports = ShopEntityURLFormat.class)
 public interface CustomerMapper {
 
     CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
+    String shopEntityName = "customers";
 
-    @Mapping(target = "customerUrl", expression = "java( CustomerURLFormat.toCustomerURL(customer.getId()) )")
+    @Mapping(target = "customerUrl", expression = "java( ShopEntityURLFormat.toShopEntityURL(shopEntityName, customer.getId()) )")
     CustomerDTO customerToCustomerDTO(Customer customer);
 
     Customer customerDtoToCustomer(CustomerDTO customerDTO);
